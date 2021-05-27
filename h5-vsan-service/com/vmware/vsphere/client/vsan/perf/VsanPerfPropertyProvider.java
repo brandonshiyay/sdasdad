@@ -898,17 +898,17 @@ public class VsanPerfPropertyProvider {
 
          perfsvcConfig = configInfoEx.perfsvcConfig;
          perfEditData.isPerformanceEnabled = this.getPerfServiceEnabled(clusterRef, perfsvcConfig);
-         if (perfEditData.isPerformanceEnabled) {
-            if (VsanCapabilityUtils.isFileAnalyticsSupportedOnVc(clusterRef)) {
-               perfEditData.isFileAnalyticsEnabled = this.isFileServiceEnabled(configInfoEx) && this.isFileAnalyticsEnabled(configInfoEx);
-            }
-
-            perfEditData.perfStatsObjectInfo = this.getPerfStatsInfo(clusterRef, retriever.getStatsObjectInformation());
-            perfEditData.policyId = this.getConfiguredPolicy(clusterRef, perfsvcConfig, perfEditData.perfStatsObjectInfo);
+         if (!perfEditData.isPerformanceEnabled) {
             var8 = perfEditData;
             return var8;
          }
 
+         if (VsanCapabilityUtils.isFileAnalyticsSupportedOnVc(clusterRef)) {
+            perfEditData.isFileAnalyticsEnabled = this.isFileServiceEnabled(configInfoEx) && this.isFileAnalyticsEnabled(configInfoEx);
+         }
+
+         perfEditData.perfStatsObjectInfo = this.getPerfStatsInfo(clusterRef, retriever.getStatsObjectInformation());
+         perfEditData.policyId = this.getConfiguredPolicy(clusterRef, perfsvcConfig, perfEditData.perfStatsObjectInfo);
          var8 = perfEditData;
       } catch (Throwable var19) {
          var3 = var19;

@@ -122,8 +122,8 @@ public class DiskGroupMutationService {
                         if (var13 != null) {
                            try {
                               point.close();
-                           } catch (Throwable var88) {
-                              var13.addSuppressed(var88);
+                           } catch (Throwable var86) {
+                              var13.addSuppressed(var86);
                            }
                         } else {
                            point.close();
@@ -131,16 +131,16 @@ public class DiskGroupMutationService {
                      }
 
                   }
-               } catch (Throwable var95) {
-                  var10 = var95;
-                  throw var95;
+               } catch (Throwable var92) {
+                  var10 = var92;
+                  throw var92;
                } finally {
                   if (conn != null) {
                      if (var10 != null) {
                         try {
                            conn.close();
-                        } catch (Throwable var87) {
-                           var10.addSuppressed(var87);
+                        } catch (Throwable var85) {
+                           var10.addSuppressed(var85);
                         }
                      } else {
                         conn.close();
@@ -148,9 +148,9 @@ public class DiskGroupMutationService {
                   }
 
                }
-            } catch (Exception var97) {
+            } catch (Exception var94) {
                logger.error("Unable to claim disks for disk spec: " + mapping);
-               throw new VsanUiLocalizableException("vsan.manage.diskManagement.claimDisks.error", var97);
+               throw new VsanUiLocalizableException("vsan.manage.diskManagement.claimDisks.error", var94);
             }
          } else {
             VcConnection conn = this.vcClient.getConnection(hostRef.getServerGuid());
@@ -171,8 +171,8 @@ public class DiskGroupMutationService {
                      if (var13 != null) {
                         try {
                            point.close();
-                        } catch (Throwable var86) {
-                           var13.addSuppressed(var86);
+                        } catch (Throwable var88) {
+                           var13.addSuppressed(var88);
                         }
                      } else {
                         point.close();
@@ -180,16 +180,16 @@ public class DiskGroupMutationService {
                   }
 
                }
-            } catch (Throwable var92) {
-               var10 = var92;
-               throw var92;
+            } catch (Throwable var96) {
+               var10 = var96;
+               throw var96;
             } finally {
                if (conn != null) {
                   if (var10 != null) {
                      try {
                         conn.close();
-                     } catch (Throwable var85) {
-                        var10.addSuppressed(var85);
+                     } catch (Throwable var87) {
+                        var10.addSuppressed(var87);
                      }
                   } else {
                      conn.close();
@@ -232,8 +232,8 @@ public class DiskGroupMutationService {
                      if (var8 != null) {
                         try {
                            point.close();
-                        } catch (Throwable var85) {
-                           var8.addSuppressed(var85);
+                        } catch (Throwable var84) {
+                           var8.addSuppressed(var84);
                         }
                      } else {
                         point.close();
@@ -249,8 +249,8 @@ public class DiskGroupMutationService {
                   if (var5 != null) {
                      try {
                         conn.close();
-                     } catch (Throwable var84) {
-                        var5.addSuppressed(var84);
+                     } catch (Throwable var83) {
+                        var5.addSuppressed(var83);
                      }
                   } else {
                      conn.close();
@@ -285,8 +285,8 @@ public class DiskGroupMutationService {
                   if (var102 != null) {
                      try {
                         point.close();
-                     } catch (Throwable var83) {
-                        var102.addSuppressed(var83);
+                     } catch (Throwable var85) {
+                        var102.addSuppressed(var85);
                      }
                   } else {
                      point.close();
@@ -642,8 +642,8 @@ public class DiskGroupMutationService {
                   if (var5 != null) {
                      try {
                         vsanConnection.close();
-                     } catch (Throwable var30) {
-                        var5.addSuppressed(var30);
+                     } catch (Throwable var31) {
+                        var5.addSuppressed(var31);
                      }
                   } else {
                      vsanConnection.close();
@@ -671,8 +671,8 @@ public class DiskGroupMutationService {
                   if (var5 != null) {
                      try {
                         vcConnection.close();
-                     } catch (Throwable var31) {
-                        var5.addSuppressed(var31);
+                     } catch (Throwable var30) {
+                        var5.addSuppressed(var30);
                      }
                   } else {
                      vcConnection.close();

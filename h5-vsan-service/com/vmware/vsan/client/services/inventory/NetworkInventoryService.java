@@ -79,25 +79,27 @@ public class NetworkInventoryService extends InventoryBrowserService {
       VcConnection vcConnection = this.vcClient.getConnection(parent.getServerGuid(), remotePscDetails.toLsInfo());
       Throwable var6 = null;
 
+      List var8;
       try {
-         if (ClusterComputeResource.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parent))) {
-            ManagedObjectReference[] networks = ((ClusterComputeResource)vcConnection.createStub(ClusterComputeResource.class, parent)).getNetwork();
-            VmodlHelper.assignServerGuid(networks, parent.getServerGuid());
-            List var8 = this.filterChildren(networks, remotePscDetails);
-            return var8;
+         if (!ClusterComputeResource.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parent))) {
+            List var22;
+            if (Datacenter.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parent))) {
+               parent = VmodlHelper.assignServerGuid(((Datacenter)vcConnection.createStub(Datacenter.class, parent)).getNetworkFolder(), parent.getServerGuid());
+               var22 = this.filterChildren(VmodlHelper.assignServerGuid(((Folder)vcConnection.createStub(Folder.class, parent)).getChildEntity(), parent.getServerGuid()), remotePscDetails);
+               return var22;
+            }
+
+            if (!Folder.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parent))) {
+               return Collections.emptyList();
+            }
+
+            var22 = this.filterChildren(VmodlHelper.assignServerGuid(((Folder)vcConnection.createStub(Folder.class, parent)).getChildEntity(), parent.getServerGuid()), remotePscDetails);
+            return var22;
          }
 
-         List var7;
-         if (Datacenter.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parent))) {
-            parent = VmodlHelper.assignServerGuid(((Datacenter)vcConnection.createStub(Datacenter.class, parent)).getNetworkFolder(), parent.getServerGuid());
-            var7 = this.filterChildren(VmodlHelper.assignServerGuid(((Folder)vcConnection.createStub(Folder.class, parent)).getChildEntity(), parent.getServerGuid()), remotePscDetails);
-            return var7;
-         }
-
-         if (Folder.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parent))) {
-            var7 = this.filterChildren(VmodlHelper.assignServerGuid(((Folder)vcConnection.createStub(Folder.class, parent)).getChildEntity(), parent.getServerGuid()), remotePscDetails);
-            return var7;
-         }
+         ManagedObjectReference[] networks = ((ClusterComputeResource)vcConnection.createStub(ClusterComputeResource.class, parent)).getNetwork();
+         VmodlHelper.assignServerGuid(networks, parent.getServerGuid());
+         var8 = this.filterChildren(networks, remotePscDetails);
       } catch (Throwable var20) {
          var6 = var20;
          throw var20;
@@ -116,7 +118,7 @@ public class NetworkInventoryService extends InventoryBrowserService {
 
       }
 
-      return Collections.emptyList();
+      return var8;
    }
 
    protected boolean isLeafNode(ManagedObjectReference item) {

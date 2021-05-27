@@ -83,13 +83,15 @@ public class VmPerformanceInventoryService extends InventoryBrowserService {
       VcConnection vcConnection = this.vcClient.getConnection(parent.getServerGuid());
       Throwable var5 = null;
 
+      List var8;
       try {
-         if (this.vmodlHelper.isOfType(parent, Folder.class)) {
-            ManagedObjectReference contextRef = (ManagedObjectReference)filterContext.get(FilterContextKey.CONTEXT_REF);
-            ManagedObjectReference[] children = VmodlHelper.assignServerGuid(((Folder)vcConnection.createStub(Folder.class, parent)).getChildEntity(), contextRef.getServerGuid());
-            List var8 = this.filterChildren(children, contextRef);
-            return var8;
+         if (!this.vmodlHelper.isOfType(parent, Folder.class)) {
+            return Collections.emptyList();
          }
+
+         ManagedObjectReference contextRef = (ManagedObjectReference)filterContext.get(FilterContextKey.CONTEXT_REF);
+         ManagedObjectReference[] children = VmodlHelper.assignServerGuid(((Folder)vcConnection.createStub(Folder.class, parent)).getChildEntity(), contextRef.getServerGuid());
+         var8 = this.filterChildren(children, contextRef);
       } catch (Throwable var18) {
          var5 = var18;
          throw var18;
@@ -108,7 +110,7 @@ public class VmPerformanceInventoryService extends InventoryBrowserService {
 
       }
 
-      return Collections.emptyList();
+      return var8;
    }
 
    private List filterChildren(ManagedObjectReference[] allChildren, ManagedObjectReference clusterRef) {

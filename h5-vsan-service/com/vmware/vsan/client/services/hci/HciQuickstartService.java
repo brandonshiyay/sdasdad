@@ -352,7 +352,6 @@ public class HciQuickstartService {
       VcConnection vcConnection = this.vcClient.getConnection(clusterRef.getServerGuid());
       Throwable var3 = null;
 
-      boolean var37;
       try {
          AuthorizationManager authorizationManager = (AuthorizationManager)vcConnection.createStub(AuthorizationManager.class, vcConnection.getContent().getAuthorizationManager());
          Measure measure = new Measure("AuthorizationManager.queryDisabledMethods");
@@ -379,23 +378,25 @@ public class HciQuickstartService {
 
          }
 
-         if (!ArrayUtils.isEmpty(disabledMethods)) {
-            DisabledMethodInfo[] var38 = disabledMethods;
+         boolean var38;
+         if (ArrayUtils.isEmpty(disabledMethods)) {
+            var38 = false;
+            return var38;
+         } else {
+            DisabledMethodInfo[] var37 = disabledMethods;
             int var39 = disabledMethods.length;
 
             for(int var8 = 0; var8 < var39; ++var8) {
-               DisabledMethodInfo info = var38[var8];
+               DisabledMethodInfo info = var37[var8];
                if (info.method != null && StringUtils.isNotEmpty(info.method.getName()) && ("configureHCI".equals(info.method.getName()) || "extendHCI".equals(info.method.getName()))) {
                   boolean var10 = true;
                   return var10;
                }
             }
 
-            var37 = false;
-            return var37;
+            var38 = false;
+            return var38;
          }
-
-         var37 = false;
       } catch (Throwable var35) {
          var3 = var35;
          throw var35;
@@ -413,8 +414,6 @@ public class HciQuickstartService {
          }
 
       }
-
-      return var37;
    }
 
    @TsService

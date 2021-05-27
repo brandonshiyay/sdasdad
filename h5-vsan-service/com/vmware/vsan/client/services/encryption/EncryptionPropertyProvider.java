@@ -28,16 +28,16 @@ public class EncryptionPropertyProvider {
          VcConnection vcConnection = this._vcClient.getConnection(clusterRef.getServerGuid());
          Throwable var4 = null;
 
+         KmipClusterData var6;
          try {
             ManagedObjectReference cryptoManagerMOR = vcConnection.getContent().cryptoManager;
-            if (cryptoManagerMOR == null) {
-               KmipClusterData var22 = result;
-               return var22;
-            }
+            if (cryptoManagerMOR != null) {
+               CryptoManagerKmip cryptoManagerKmip = (CryptoManagerKmip)vcConnection.createStub(CryptoManagerKmip.class, cryptoManagerMOR);
+               KmipClusterInfo[] clusters = cryptoManagerKmip.listKmipServers((Integer)null);
+               if (clusters == null) {
+                  return result;
+               }
 
-            CryptoManagerKmip cryptoManagerKmip = (CryptoManagerKmip)vcConnection.createStub(CryptoManagerKmip.class, cryptoManagerMOR);
-            KmipClusterInfo[] clusters = cryptoManagerKmip.listKmipServers((Integer)null);
-            if (clusters != null) {
                KmipClusterInfo[] var8 = clusters;
                int var9 = clusters.length;
 
@@ -48,7 +48,11 @@ public class EncryptionPropertyProvider {
                      result.defaultKmipCluster = clusterInfo.clusterId.id;
                   }
                }
+
+               return result;
             }
+
+            var6 = result;
          } catch (Throwable var20) {
             var4 = var20;
             throw var20;
@@ -67,7 +71,7 @@ public class EncryptionPropertyProvider {
 
          }
 
-         return result;
+         return var6;
       }
    }
 

@@ -907,6 +907,7 @@ public class VsanHealthPropertyProvider {
       VsanConnection conn = this.vsanClient.getConnection(clusterRef.getServerGuid());
       Throwable var3 = null;
 
+      ComplianceCheckResultData var8;
       try {
          VsanVcPrecheckerSystem precheckerSystem = conn.getVsanPreCheckerSystem();
 
@@ -916,10 +917,11 @@ public class VsanHealthPropertyProvider {
 
             try {
                VsanComplianceResourceCheckStatus status = precheckerSystem.getComplianceResourceCheckStatus(clusterRef);
-               if (status != null && status.result != null && status.result.faultDomains != null) {
-                  ComplianceCheckResultData var8 = this.parseComplianceCheck(status.result.faultDomains);
-                  return var8;
+               if (status == null || status.result == null || status.result.faultDomains == null) {
+                  return null;
                }
+
+               var8 = this.parseComplianceCheck(status.result.faultDomains);
             } catch (Throwable var36) {
                var6 = var36;
                throw var36;
@@ -939,6 +941,7 @@ public class VsanHealthPropertyProvider {
             }
          } catch (Exception var38) {
             logger.error("error in parse the compliance result", var38);
+            return null;
          }
       } catch (Throwable var39) {
          var3 = var39;
@@ -958,7 +961,7 @@ public class VsanHealthPropertyProvider {
 
       }
 
-      return null;
+      return var8;
    }
 
    private ComplianceCheckResultObj transformHostData(VsanHostComplianceResourceCheck host) {

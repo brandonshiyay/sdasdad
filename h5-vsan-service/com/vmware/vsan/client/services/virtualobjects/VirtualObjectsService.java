@@ -467,7 +467,7 @@ public class VirtualObjectsService {
       Map hostToStorageObjUuidMapping;
       List vsanObjects;
       try {
-         label228: {
+         label230: {
             Measure measure = new Measure("Collecting placement details (" + vsanObjectIds.length + " objects)");
             Throwable var11 = null;
 
@@ -506,7 +506,7 @@ public class VirtualObjectsService {
                   hostToDisks = dataRetriever.getDisks();
                   hostToPmemStorage = this.pmemService.getPmemStorage(clusterRef, true);
                   hostToStorageObjUuidMapping = (Map)hostToStorageObjUuidMappingFuture.get();
-                  break label228;
+                  break label230;
                }
 
                var14 = new HashMap();

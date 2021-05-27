@@ -364,6 +364,7 @@ public class VsanHealthMutationProvider {
       VsanConnection conn = this.vsanClient.getConnection(entity.getServerGuid());
       Throwable var3 = null;
 
+      ManagedObjectReference var8;
       try {
          VsanClusterMgmtInternalSystem system = conn.getVsanClusterMgmtInternalSystem();
          VsanProfiler.Point p = _profiler.point("VsanClusterMgmtInternalSystem.remediateVsanCluster");
@@ -371,10 +372,11 @@ public class VsanHealthMutationProvider {
 
          try {
             ManagedObjectReference taskRef = system.remediateVsanCluster(entity);
-            if (taskRef != null) {
-               ManagedObjectReference var8 = VsanHealthUtil.buildTaskMor(taskRef.getValue(), entity.getServerGuid());
-               return var8;
+            if (taskRef == null) {
+               return null;
             }
+
+            var8 = VsanHealthUtil.buildTaskMor(taskRef.getValue(), entity.getServerGuid());
          } catch (Throwable var34) {
             var6 = var34;
             throw var34;
@@ -410,6 +412,6 @@ public class VsanHealthMutationProvider {
 
       }
 
-      return null;
+      return var8;
    }
 }

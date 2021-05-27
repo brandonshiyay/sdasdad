@@ -41,7 +41,7 @@ public class FileServiceAnalyticsService {
          VsanConnection conn = this.vsanClient.getConnection(clusterRef.getServerGuid());
          Throwable var3 = null;
 
-         FileAnalyticsScanStatusInfo scanResult;
+         FileAnalyticsScanStatusInfo var9;
          try {
             VsanVcFileAnalyticsSystem fileAnalyticsSystem = conn.getVsanFileAnalyticsSystem();
             Measure measure = new Measure("VsanVcFileAnalyticsSystem.getScanStatus");
@@ -49,14 +49,15 @@ public class FileServiceAnalyticsService {
 
             try {
                FileAnalyticsScanStatus scanStatus = fileAnalyticsSystem.getScanStatus(clusterRef);
-               if (scanStatus != null) {
-                  scanResult = new FileAnalyticsScanStatusInfo(scanStatus.scanDuration != null ? (long)Integer.parseInt(scanStatus.scanDuration) : 0L, scanStatus.lastScanTime.getTime());
-                  FileAnalyticsScanStatusInfo var9 = scanResult;
-                  return var9;
+               FileAnalyticsScanStatusInfo scanResult;
+               if (scanStatus == null) {
+                  this.logger.debug("The file service analytics hasn't done any file share scanning yet.");
+                  scanResult = null;
+                  return scanResult;
                }
 
-               this.logger.debug("The file service analytics hasn't done any file share scanning yet.");
-               scanResult = null;
+               scanResult = new FileAnalyticsScanStatusInfo(scanStatus.scanDuration != null ? (long)Integer.parseInt(scanStatus.scanDuration) : 0L, scanStatus.lastScanTime.getTime());
+               var9 = scanResult;
             } catch (Throwable var37) {
                var6 = var37;
                throw var37;
@@ -92,7 +93,7 @@ public class FileServiceAnalyticsService {
 
          }
 
-         return scanResult;
+         return var9;
       } catch (Exception var41) {
          this.logger.error("Unable to fetch the file service analytics last scan result.", var41);
          throw new VsanUiLocalizableException("vsan.fileanalytics.scan.error", var41);

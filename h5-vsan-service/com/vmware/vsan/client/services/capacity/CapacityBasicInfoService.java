@@ -43,20 +43,19 @@ public class CapacityBasicInfoService {
          Measure measure = new Measure("Get capacity basic info");
          Throwable var5 = null;
 
-         CapacityBasicInfo var8;
          try {
             CompletableFuture configInfo = this.configInfoService.getVsanConfigInfoAsync(clusterRef);
             DataServiceResponse hostProperties = this.queryHostProperties(clusterRef);
             basicInfo.isComputeOnlyCluster = this.csdService.isComputeOnlyClusterByConfigInfoEx((ConfigInfoEx)configInfo.get());
-            if (hostProperties != null && !ArrayUtils.isEmpty(hostProperties.getPropertyValues())) {
-               basicInfo.isCsdSupported = this.csdService.isCsdSupported(objectRef);
-               basicInfo.hostCount = hostProperties.getResourceObjects().size();
-               basicInfo.faultyHostsTotalCount = this.getFaultyHostsCount(hostProperties);
-               basicInfo.isHistoricalCapacitySupported = this.isHistoricalCapacitySupported((ManagedObjectReference[])hostProperties.getResourceObjects().toArray(new ManagedObjectReference[0]));
-               return basicInfo;
+            if (hostProperties == null || ArrayUtils.isEmpty(hostProperties.getPropertyValues())) {
+               CapacityBasicInfo var8 = basicInfo;
+               return var8;
             }
 
-            var8 = basicInfo;
+            basicInfo.isCsdSupported = this.csdService.isCsdSupported(objectRef);
+            basicInfo.hostCount = hostProperties.getResourceObjects().size();
+            basicInfo.faultyHostsTotalCount = this.getFaultyHostsCount(hostProperties);
+            basicInfo.isHistoricalCapacitySupported = this.isHistoricalCapacitySupported((ManagedObjectReference[])hostProperties.getResourceObjects().toArray(new ManagedObjectReference[0]));
          } catch (Throwable var19) {
             var5 = var19;
             throw var19;
@@ -75,7 +74,7 @@ public class CapacityBasicInfoService {
 
          }
 
-         return var8;
+         return basicInfo;
       } catch (Exception var21) {
          this.logger.error("Unable to extract cluster's configuration for capacity view.", var21);
          throw new VsanUiLocalizableException(var21);

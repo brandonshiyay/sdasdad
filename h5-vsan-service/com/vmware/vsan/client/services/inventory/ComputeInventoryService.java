@@ -97,8 +97,8 @@ public class ComputeInventoryService extends InventoryBrowserService {
       VcConnection vcConnection = this.vcClient.getConnection(parentRef.getServerGuid(), remotePscDetails.toLsInfo());
       Throwable var6 = null;
 
+      List var9;
       try {
-         List var9;
          if (Datacenter.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parentRef))) {
             ManagedObjectReference hostFolderRef = ((Datacenter)vcConnection.createStub(Datacenter.class, parentRef)).getHostFolder();
             Folder hostFolder = (Folder)vcConnection.createStub(Folder.class, hostFolderRef);
@@ -106,25 +106,26 @@ public class ComputeInventoryService extends InventoryBrowserService {
             return var9;
          }
 
-         if (ClusterComputeResource.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parentRef))) {
-            ClusterComputeResource cluster = (ClusterComputeResource)vcConnection.createStub(ClusterComputeResource.class, parentRef);
-            ManagedObjectReference[] resourcePools = ((ResourcePool)vcConnection.createStub(ResourcePool.class, cluster.getResourcePool())).getResourcePool();
-            var9 = this.filterChildren(VmodlHelper.assignServerGuid((ManagedObjectReference[])ArrayUtils.addAll(resourcePools, cluster.getHost()), parentRef.getServerGuid()), remotePscDetails);
-            return var9;
-         }
+         if (!ClusterComputeResource.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parentRef))) {
+            if (ComputeResource.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parentRef))) {
+               ComputeResource host = (ComputeResource)vcConnection.createStub(ComputeResource.class, parentRef);
+               ResourcePool pool = (ResourcePool)vcConnection.createStub(ResourcePool.class, host.getResourcePool());
+               var9 = this.filterChildren(VmodlHelper.assignServerGuid(pool.getResourcePool(), parentRef.getServerGuid()), remotePscDetails);
+               return var9;
+            }
 
-         if (ComputeResource.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parentRef))) {
-            ComputeResource host = (ComputeResource)vcConnection.createStub(ComputeResource.class, parentRef);
-            ResourcePool pool = (ResourcePool)vcConnection.createStub(ResourcePool.class, host.getResourcePool());
-            var9 = this.filterChildren(VmodlHelper.assignServerGuid(pool.getResourcePool(), parentRef.getServerGuid()), remotePscDetails);
-            return var9;
-         }
+            if (!Folder.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parentRef))) {
+               return new ArrayList();
+            }
 
-         if (Folder.class.isAssignableFrom(this.vmodlHelper.getTypeClass(parentRef))) {
             Folder folder = (Folder)vcConnection.createStub(Folder.class, parentRef);
-            List var8 = this.filterChildren(VmodlHelper.assignServerGuid(folder.getChildEntity(), parentRef.getServerGuid()), remotePscDetails);
-            return var8;
+            List var27 = this.filterChildren(VmodlHelper.assignServerGuid(folder.getChildEntity(), parentRef.getServerGuid()), remotePscDetails);
+            return var27;
          }
+
+         ClusterComputeResource cluster = (ClusterComputeResource)vcConnection.createStub(ClusterComputeResource.class, parentRef);
+         ManagedObjectReference[] resourcePools = ((ResourcePool)vcConnection.createStub(ResourcePool.class, cluster.getResourcePool())).getResourcePool();
+         var9 = this.filterChildren(VmodlHelper.assignServerGuid((ManagedObjectReference[])ArrayUtils.addAll(resourcePools, cluster.getHost()), parentRef.getServerGuid()), remotePscDetails);
       } catch (Throwable var22) {
          var6 = var22;
          throw var22;
@@ -143,7 +144,7 @@ public class ComputeInventoryService extends InventoryBrowserService {
 
       }
 
-      return new ArrayList();
+      return var9;
    }
 
    protected boolean isTypeSupported(ManagedObjectReference ref) {

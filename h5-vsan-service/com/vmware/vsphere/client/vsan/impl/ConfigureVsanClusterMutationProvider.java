@@ -238,8 +238,8 @@ public class ConfigureVsanClusterMutationProvider {
                      if (var9 != null) {
                         try {
                            point.close();
-                        } catch (Throwable var84) {
-                           var9.addSuppressed(var84);
+                        } catch (Throwable var82) {
+                           var9.addSuppressed(var82);
                         }
                      } else {
                         point.close();
@@ -247,16 +247,16 @@ public class ConfigureVsanClusterMutationProvider {
                   }
 
                }
-            } catch (Throwable var91) {
-               var6 = var91;
-               throw var91;
+            } catch (Throwable var88) {
+               var6 = var88;
+               throw var88;
             } finally {
                if (conn != null) {
                   if (var6 != null) {
                      try {
                         conn.close();
-                     } catch (Throwable var82) {
-                        var6.addSuppressed(var82);
+                     } catch (Throwable var81) {
+                        var6.addSuppressed(var81);
                      }
                   } else {
                      conn.close();
@@ -264,8 +264,8 @@ public class ConfigureVsanClusterMutationProvider {
                }
 
             }
-         } catch (Exception var93) {
-            throw new VsanUiLocalizableException("vsan.common.cluster.reconfigure.error", var93);
+         } catch (Exception var90) {
+            throw new VsanUiLocalizableException("vsan.common.cluster.reconfigure.error", var90);
          }
       } else {
          ConfigSpecEx clusterSpecEx = new ConfigSpecEx();
@@ -288,8 +288,8 @@ public class ConfigureVsanClusterMutationProvider {
                   if (var9 != null) {
                      try {
                         point.close();
-                     } catch (Throwable var83) {
-                        var9.addSuppressed(var83);
+                     } catch (Throwable var84) {
+                        var9.addSuppressed(var84);
                      }
                   } else {
                      point.close();
@@ -297,16 +297,16 @@ public class ConfigureVsanClusterMutationProvider {
                }
 
             }
-         } catch (Throwable var88) {
-            var6 = var88;
-            throw var88;
+         } catch (Throwable var92) {
+            var6 = var92;
+            throw var92;
          } finally {
             if (vcConnection != null) {
                if (var6 != null) {
                   try {
                      vcConnection.close();
-                  } catch (Throwable var81) {
-                     var6.addSuppressed(var81);
+                  } catch (Throwable var83) {
+                     var6.addSuppressed(var83);
                   }
                } else {
                   vcConnection.close();

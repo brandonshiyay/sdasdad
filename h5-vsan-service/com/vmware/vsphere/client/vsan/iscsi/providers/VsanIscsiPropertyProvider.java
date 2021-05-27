@@ -102,8 +102,8 @@ public class VsanIscsiPropertyProvider {
                }
 
                return var11;
-            } catch (Exception var39) {
-               throw new VsanUiLocalizableException(var39);
+            } catch (Exception var41) {
+               throw new VsanUiLocalizableException(var41);
             }
          } else {
             VsanIscsiTargetConfig iscsiTargetConfig = new VsanIscsiTargetConfig();
@@ -133,8 +133,8 @@ public class VsanIscsiPropertyProvider {
                }
 
                return iscsiTargetConfig;
-            } catch (Exception var41) {
-               throw new VsanUiLocalizableException(var41);
+            } catch (Exception var39) {
+               throw new VsanUiLocalizableException(var39);
             }
          }
       }

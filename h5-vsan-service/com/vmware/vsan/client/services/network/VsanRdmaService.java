@@ -89,12 +89,12 @@ public class VsanRdmaService {
       try {
          VsanVcClusterConfigSystem vsanConfigSystem = conn.getVsanConfigSystem();
          ConfigInfoEx configInfoEx = vsanConfigSystem.getConfigInfoEx(clusterRef);
-         if (configInfoEx.rdmaConfig != null) {
-            var6 = configInfoEx.rdmaConfig.rdmaEnabled;
+         if (configInfoEx.rdmaConfig == null) {
+            var6 = false;
             return var6;
          }
 
-         var6 = false;
+         var6 = configInfoEx.rdmaConfig.rdmaEnabled;
       } catch (Throwable var16) {
          var3 = var16;
          throw var16;

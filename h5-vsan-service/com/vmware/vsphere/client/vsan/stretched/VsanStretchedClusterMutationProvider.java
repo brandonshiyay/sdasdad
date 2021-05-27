@@ -56,8 +56,8 @@ public class VsanStretchedClusterMutationProvider {
                   if (var10 != null) {
                      try {
                         measure.close();
-                     } catch (Throwable var79) {
-                        var10.addSuppressed(var79);
+                     } catch (Throwable var80) {
+                        var10.addSuppressed(var80);
                      }
                   } else {
                      measure.close();
@@ -73,8 +73,8 @@ public class VsanStretchedClusterMutationProvider {
                if (var7 != null) {
                   try {
                      conn.close();
-                  } catch (Throwable var78) {
-                     var7.addSuppressed(var78);
+                  } catch (Throwable var79) {
+                     var7.addSuppressed(var79);
                   }
                } else {
                   conn.close();
@@ -118,8 +118,8 @@ public class VsanStretchedClusterMutationProvider {
                if (var91 != null) {
                   try {
                      conn.close();
-                  } catch (Throwable var80) {
-                     var91.addSuppressed(var80);
+                  } catch (Throwable var78) {
+                     var91.addSuppressed(var78);
                   }
                } else {
                   conn.close();

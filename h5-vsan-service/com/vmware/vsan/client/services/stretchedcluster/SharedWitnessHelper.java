@@ -180,7 +180,6 @@ public class SharedWitnessHelper {
       VsanConnection conn = this.vsanClient.getConnection(hostRef.getServerGuid());
       Throwable var5 = null;
 
-      Object var10;
       try {
          VsanSystemEx vsanSystemEx = conn.getVsanSystemEx(hostRef);
 
@@ -191,13 +190,13 @@ public class SharedWitnessHelper {
 
             try {
                RuntimeStats runtimeStats = vsanSystemEx.getRuntimeStats(RUNTIME_STATS, (String)null);
-               if (runtimeStats != null) {
-                  maxComponentsPerCluster = runtimeStats.componentLimitPerCluster;
-                  maxWitnessClusters = runtimeStats.maxWitnessClusters;
-                  return new SharedWitnessLimits(hostRef, maxComponentsPerCluster, maxWitnessClusters);
+               if (runtimeStats == null) {
+                  Object var10 = null;
+                  return (SharedWitnessLimits)var10;
                }
 
-               var10 = null;
+               maxComponentsPerCluster = runtimeStats.componentLimitPerCluster;
+               maxWitnessClusters = runtimeStats.maxWitnessClusters;
             } catch (Throwable var39) {
                var8 = var39;
                throw var39;
@@ -238,6 +237,6 @@ public class SharedWitnessHelper {
 
       }
 
-      return (SharedWitnessLimits)var10;
+      return new SharedWitnessLimits(hostRef, maxComponentsPerCluster, maxWitnessClusters);
    }
 }

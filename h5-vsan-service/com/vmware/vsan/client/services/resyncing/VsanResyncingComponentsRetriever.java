@@ -486,33 +486,35 @@ public class VsanResyncingComponentsRetriever {
             VsanProfiler.Point point = VsanResyncingComponentsRetriever._profiler.point("parseVsanResyncObjects");
             Throwable var4 = null;
 
+            HashSet var6;
             try {
                JsonNode root = Utils.getJsonRootNode(resyncDataJsonStr);
-               if (root == null) {
-                  HashSet var26 = result;
-                  return var26;
-               }
+               if (root != null) {
+                  Map componentUuidsToHostNames = getComponentUuidToHostNameMap(root, hostNodeUuidsToHostNames);
+                  JsonNode domObjects = root.get("dom_objects");
+                  if (domObjects == null) {
+                     HashSet var27 = result;
+                     return var27;
+                  }
 
-               Map componentUuidsToHostNames = getComponentUuidToHostNameMap(root, hostNodeUuidsToHostNames);
-               JsonNode domObjects = root.get("dom_objects");
-               if (domObjects == null) {
-                  HashSet var27 = result;
-                  return var27;
-               }
+                  Iterator fnIterator = domObjects.fieldNames();
 
-               Iterator fnIterator = domObjects.fieldNames();
-
-               while(fnIterator.hasNext()) {
-                  String vsanObjectUuid = (String)fnIterator.next();
-                  JsonNode vsanObjectNode = domObjects.path(vsanObjectUuid).path("config").path("content");
-                  if (!vsanObjectNode.isMissingNode()) {
-                     List components = getComponentObjects(vsanObjectNode, componentUuidsToHostNames);
-                     if (components.size() > 0) {
-                        VsanObject vmObjectData = new VsanObject(vsanObjectUuid, components);
-                        result.add(vmObjectData);
+                  while(fnIterator.hasNext()) {
+                     String vsanObjectUuid = (String)fnIterator.next();
+                     JsonNode vsanObjectNode = domObjects.path(vsanObjectUuid).path("config").path("content");
+                     if (!vsanObjectNode.isMissingNode()) {
+                        List components = getComponentObjects(vsanObjectNode, componentUuidsToHostNames);
+                        if (components.size() > 0) {
+                           VsanObject vmObjectData = new VsanObject(vsanObjectUuid, components);
+                           result.add(vmObjectData);
+                        }
                      }
                   }
+
+                  return result;
                }
+
+               var6 = result;
             } catch (Throwable var23) {
                var4 = var23;
                throw var23;
@@ -531,7 +533,7 @@ public class VsanResyncingComponentsRetriever {
 
             }
 
-            return result;
+            return var6;
          } catch (Exception var25) {
             VsanResyncingComponentsRetriever._logger.error("Failed to parse vsan resyncing data JSON string. ", var25);
             throw var25;

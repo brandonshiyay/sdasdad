@@ -40,8 +40,8 @@ public class HealthCheckingFactory extends CachedResourceFactory {
 
             try {
                monitor.onError((Resource)null, settings, e);
-            } catch (Exception var6) {
-               logger.warn("onError failure", var6);
+            } catch (Exception var7) {
+               logger.warn("onError failure", var7);
             }
 
             throw var9;
@@ -55,8 +55,8 @@ public class HealthCheckingFactory extends CachedResourceFactory {
             try {
                logger.warn("Closing resource due to an onCreated handler failure", e);
                resource.close();
-            } catch (Exception var7) {
-               logger.warn("Could not dispose of resource", var7);
+            } catch (Exception var6) {
+               logger.warn("Could not dispose of resource", var6);
             }
 
             throw var8;

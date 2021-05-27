@@ -39,7 +39,6 @@ public class VsanIscsiTargetMutationProvider {
       VsanConnection conn = this.vsanClient.getConnection(clusterRef.getServerGuid());
       Throwable var4 = null;
 
-      ManagedObjectReference var9;
       try {
          VsanIscsiTargetSystem vsanIscsiSystem = conn.getVsanIscsiSystem();
          VsanProfiler.Point p = _profiler.point("vsanIscsiSystem.addIscsiTarget");
@@ -47,12 +46,11 @@ public class VsanIscsiTargetMutationProvider {
 
          try {
             ManagedObjectReference taskRef = vsanIscsiSystem.addIscsiTarget(clusterRef, spec.toVmodlVsanIscsiTargetSpec(clusterRef));
-            if (taskRef == null) {
-               return null;
+            if (taskRef != null) {
+               VmodlHelper.assignServerGuid(taskRef, clusterRef.getServerGuid());
+               ManagedObjectReference var9 = taskRef;
+               return var9;
             }
-
-            VmodlHelper.assignServerGuid(taskRef, clusterRef.getServerGuid());
-            var9 = taskRef;
          } catch (Throwable var35) {
             var7 = var35;
             throw var35;
@@ -88,7 +86,7 @@ public class VsanIscsiTargetMutationProvider {
 
       }
 
-      return var9;
+      return null;
    }
 
    private void validateTargetIQN(ManagedObjectReference clusterRef, String iqn) throws Exception {
@@ -500,7 +498,6 @@ public class VsanIscsiTargetMutationProvider {
       VsanConnection conn = this.vsanClient.getConnection(clusterRef.getServerGuid());
       Throwable var4 = null;
 
-      ManagedObjectReference var9;
       try {
          VsanIscsiTargetSystem vsanIscsiSystem = conn.getVsanIscsiSystem();
          VsanProfiler.Point p = _profiler.point("vsanIscsiSystem.editIscsiLUN");
@@ -508,12 +505,11 @@ public class VsanIscsiTargetMutationProvider {
 
          try {
             ManagedObjectReference taskRef = vsanIscsiSystem.editIscsiLUN(clusterRef, spec.targetAlias, spec.toVmodlVsanIscsiLUNSpec());
-            if (taskRef == null) {
-               return null;
+            if (taskRef != null) {
+               VmodlHelper.assignServerGuid(taskRef, clusterRef.getServerGuid());
+               ManagedObjectReference var9 = taskRef;
+               return var9;
             }
-
-            VmodlHelper.assignServerGuid(taskRef, clusterRef.getServerGuid());
-            var9 = taskRef;
          } catch (Throwable var35) {
             var7 = var35;
             throw var35;
@@ -549,7 +545,7 @@ public class VsanIscsiTargetMutationProvider {
 
       }
 
-      return var9;
+      return null;
    }
 
    private void validateLunId(ManagedObjectReference clusterRef, String targetAlias, int newId) throws VsanUiLocalizableException {

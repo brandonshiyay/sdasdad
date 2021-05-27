@@ -151,8 +151,8 @@ public class VsanPerfMutationProvider {
                if (var5 != null) {
                   try {
                      conn.close();
-                  } catch (Throwable var76) {
-                     var5.addSuppressed(var76);
+                  } catch (Throwable var78) {
+                     var5.addSuppressed(var78);
                   }
                } else {
                   conn.close();
@@ -181,8 +181,8 @@ public class VsanPerfMutationProvider {
                   if (var8 != null) {
                      try {
                         p.close();
-                     } catch (Throwable var78) {
-                        var8.addSuppressed(var78);
+                     } catch (Throwable var77) {
+                        var8.addSuppressed(var77);
                      }
                   } else {
                      p.close();
@@ -198,8 +198,8 @@ public class VsanPerfMutationProvider {
                if (var5 != null) {
                   try {
                      conn.close();
-                  } catch (Throwable var77) {
-                     var5.addSuppressed(var77);
+                  } catch (Throwable var76) {
+                     var5.addSuppressed(var76);
                   }
                } else {
                   conn.close();

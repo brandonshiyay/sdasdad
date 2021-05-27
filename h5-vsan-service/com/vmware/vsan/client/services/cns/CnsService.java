@@ -152,7 +152,6 @@ public class CnsService {
          VsanConnection connection = this.vsanClient.getConnection(objectRef.getServerGuid());
          Throwable var9 = null;
 
-         VolumeFilterResult var47;
          try {
             VolumeManager volumeManager = connection.getCnsVolumeManager();
 
@@ -189,14 +188,14 @@ public class CnsService {
             }
 
             result.total = queryResult.cursor.totalRecords;
-            if (!ArrayUtils.isEmpty(queryResult.volumes)) {
-               List volumes = this.createVolumes(objectRef, queryResult, allDatastoresMetadata);
-               result.volumes = (Volume[])volumes.toArray(new Volume[0]);
-               return result;
+            if (ArrayUtils.isEmpty(queryResult.volumes)) {
+               result.volumes = new Volume[0];
+               VolumeFilterResult var48 = result;
+               return var48;
             }
 
-            result.volumes = new Volume[0];
-            var47 = result;
+            List volumes = this.createVolumes(objectRef, queryResult, allDatastoresMetadata);
+            result.volumes = (Volume[])volumes.toArray(new Volume[0]);
          } catch (Throwable var45) {
             var9 = var45;
             throw var45;
@@ -215,7 +214,7 @@ public class CnsService {
 
          }
 
-         return var47;
+         return result;
       }
    }
 
@@ -675,7 +674,6 @@ public class CnsService {
       VcConnection connection = this.vcClient.getConnection(datastoreRef.getServerGuid());
       Throwable var7 = null;
 
-      VolumeDetails var13;
       try {
          Datastore datastore = (Datastore)connection.createStub(Datastore.class, datastoreRef);
          HostMount[] hosts = datastore.getHost();
@@ -687,40 +685,37 @@ public class CnsService {
          HostSystem host = (HostSystem)connection.createStub(HostSystem.class, hosts[0].key);
          result.cluster = host.getParent();
          VmodlHelper.assignServerGuid(result.cluster, datastoreRef.getServerGuid());
-         if (!StringUtils.isNotEmpty(fileshareName)) {
-            VStorageObjectManager vStorageObjectManager = connection.getVStorageObjectManager();
-            VStorageObject vStorageObject = vStorageObjectManager.retrieveVStorageObject(new ID(volumeID), datastoreRef);
-            if (vStorageObject.getConfig() != null && vStorageObject.getConfig().getBacking() != null) {
-               BackingInfo backing = vStorageObject.getConfig().getBacking();
-               if (backing instanceof DiskFileBackingInfo) {
-                  result.virtualObject.uuids.add(((DiskFileBackingInfo)backing).getBackingObjectId());
-               }
+         if (StringUtils.isNotEmpty(fileshareName)) {
+            List fileShares = this.fileServiceConfigService.queryShare(result.cluster, fileshareName);
+            if (fileShares.size() == 0) {
+               logger.error("Cannot find fileshare with name: " + fileshareName);
+               throw new VsanUiLocalizableException();
             }
 
-            if (result.virtualObject.uuids.isEmpty()) {
-               logger.error("Unable to get vSAN object uuid of volume " + volumeID);
-            } else if (!hasExtensionId) {
-               List vmDiskAssociations = this.getVolumeVmDiskAssociations(datastoreRef, volumeID, vStorageObjectManager);
-               if (vmDiskAssociations.size() > 0) {
-                  result.virtualObject.filter = DisplayObjectType.VM;
-               }
+            VsanFileServiceShare fileShare = (VsanFileServiceShare)fileShares.get(0);
+            result.virtualObject = new VirtualObject(fileShare.objectUuids, DisplayObjectType.FILE_VOLUME);
+            result.fileShare = new FileShareConfig(fileShare.config.domainName, fileShare.config.protocol);
+            VolumeDetails var28 = result;
+            return var28;
+         }
 
-               return result;
+         VStorageObjectManager vStorageObjectManager = connection.getVStorageObjectManager();
+         VStorageObject vStorageObject = vStorageObjectManager.retrieveVStorageObject(new ID(volumeID), datastoreRef);
+         if (vStorageObject.getConfig() != null && vStorageObject.getConfig().getBacking() != null) {
+            BackingInfo backing = vStorageObject.getConfig().getBacking();
+            if (backing instanceof DiskFileBackingInfo) {
+               result.virtualObject.uuids.add(((DiskFileBackingInfo)backing).getBackingObjectId());
             }
-
-            return result;
          }
 
-         List fileShares = this.fileServiceConfigService.queryShare(result.cluster, fileshareName);
-         if (fileShares.size() == 0) {
-            logger.error("Cannot find fileshare with name: " + fileshareName);
-            throw new VsanUiLocalizableException();
+         if (result.virtualObject.uuids.isEmpty()) {
+            logger.error("Unable to get vSAN object uuid of volume " + volumeID);
+         } else if (!hasExtensionId) {
+            List vmDiskAssociations = this.getVolumeVmDiskAssociations(datastoreRef, volumeID, vStorageObjectManager);
+            if (vmDiskAssociations.size() > 0) {
+               result.virtualObject.filter = DisplayObjectType.VM;
+            }
          }
-
-         VsanFileServiceShare fileShare = (VsanFileServiceShare)fileShares.get(0);
-         result.virtualObject = new VirtualObject(fileShare.objectUuids, DisplayObjectType.FILE_VOLUME);
-         result.fileShare = new FileShareConfig(fileShare.config.domainName, fileShare.config.protocol);
-         var13 = result;
       } catch (Throwable var23) {
          var7 = var23;
          throw var23;
@@ -739,7 +734,7 @@ public class CnsService {
 
       }
 
-      return var13;
+      return result;
    }
 
    private List getVolumeVmDiskAssociations(ManagedObjectReference datastoreRef, String volumeID, VStorageObjectManager vStorageObjectManager) {
@@ -747,21 +742,20 @@ public class CnsService {
       Measure measure = new Measure("VStorageObjectManager.retrieveVStorageObjectAssociations");
       Throwable var6 = null;
 
-      List var8;
+      ArrayList var8;
       try {
          VStorageObjectAssociations[] vStorageObjectAssociations = vStorageObjectManager.retrieveVStorageObjectAssociations(new RetrieveVStorageObjSpec[]{vStorageObjSpec});
-         ArrayList var21;
-         if (ArrayUtils.isEmpty(vStorageObjectAssociations)) {
-            var21 = new ArrayList();
-            return var21;
+         if (!ArrayUtils.isEmpty(vStorageObjectAssociations)) {
+            if (!ArrayUtils.isEmpty(vStorageObjectAssociations[0].vmDiskAssociations)) {
+               List var21 = Arrays.asList(vStorageObjectAssociations[0].vmDiskAssociations);
+               return var21;
+            }
+
+            var8 = new ArrayList();
+            return var8;
          }
 
-         if (ArrayUtils.isEmpty(vStorageObjectAssociations[0].vmDiskAssociations)) {
-            var21 = new ArrayList();
-            return var21;
-         }
-
-         var8 = Arrays.asList(vStorageObjectAssociations[0].vmDiskAssociations);
+         var8 = new ArrayList();
       } catch (Throwable var19) {
          var6 = var19;
          throw var19;
